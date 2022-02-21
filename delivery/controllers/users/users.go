@@ -36,6 +36,28 @@ func (uscon UsersController) Gets() http.HandlerFunc {
 				// 	"data":    res,
 				// })
 			}
+		case "POST":
+			decoder := json.NewDecoder(r.Body)
+
+			var input entities.User
+
+			if err := decoder.Decode(&input); err != nil {
+				http.Error(w, common.NewBadRequestResponse(entities.User{}).Message, common.NewBadRequestResponse(entities.User{}).Code)
+			}
+
+			newUser := entities.User{
+				ID: input.ID, Name: input.Name, Email: input.Email, Password: input.Password,
+			}
+
+			if res, err := uscon.Repo.AddUser(newUser); err != nil {
+				http.Error(w, common.NewBadRequestResponse(entities.User{}).Message, common.NewBadRequestResponse(entities.User{}).Code)
+			} else {
+				w.Header().Set("Content-Type", "application/json")
+				w.WriteHeader(200)
+
+				json.NewEncoder(w).Encode(common.NewSuccessOperationResponse(res))
+			}
+
 		default:
 			http.Error(w, common.NewBadRequestResponse([]entities.User{}).Message, common.NewBadRequestResponse([]entities.User{}).Code)
 		}
