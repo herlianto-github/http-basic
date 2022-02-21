@@ -14,6 +14,15 @@
   </a>
 </div>
 
+# Database Schema
+
+<!-- Description -->
+<div align="center">
+  <a href="https://github.com/herlianto-github/Http-Basic/IMAGES/ERD.png">
+    <img src="IMAGES/ERD.png" alt="Logo">
+  </a>
+</div>
+
 # Table of Content
 
 1. [About The Project](#http-basic)
