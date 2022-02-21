@@ -16,7 +16,7 @@
 
 # Database Schema
 
-<!-- Description -->
+<!-- Database Schema -->
 <div align="center">
   <a href="https://github.com/herlianto-github/Http-Basic/IMAGES/ERD.png">
     <img src="IMAGES/ERD.png" alt="Logo">
@@ -26,24 +26,16 @@
 # Table of Content
 
 1. [About The Project](#http-basic)
-2. [High Level Architecture](#high-level-architecture)
-3. [Technology Stack](#technology-stack)        
+2. [Technology Stack](#technology-stack)        
     - [Package](#package)
     - [Database](#database)
     - [Deployment](#deployment)
     - [Collaboration](#collaboration)
-4. [Folder Structure](#structuring)
-5. [Unit Test](#unit-test)
+3. [Folder Structure](#structuring)
+4. [Unit Test](#unit-test)
+5. [How To Use](HOW_TO_USE.md)
 6. [How To Contribute](CONRTIBUTING.md)
-7. [Contacts](#authors)
-
-  <p align="right">(<a href="#top">back to top</a>)</p>
-
-# High Level Architecture
- <!-- High Level Architecture -->  
-  <div align="center">    
-    Coming soon
-  </div>
+7. [Contacts](#contact)
 
   <p align="right">(<a href="#top">back to top</a>)</p>
 
