@@ -2,18 +2,27 @@ package main
 
 import (
 	"fmt"
+	"httpBasic/configs"
+	"httpBasic/delivery/controllers/users"
+	"httpBasic/delivery/routes"
+	usersRepo "httpBasic/repository/users"
+	"httpBasic/utils"
 	"net/http"
 )
 
 func main() {
 
-	handlerIndex := func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("Hello World"))
-	}
+	config := configs.GetConfig()
+	db := utils.InitDB(config)
 
-	http.HandleFunc("/", handlerIndex)
-	http.HandleFunc("/index", handlerIndex)
+	handlers := http.NewServeMux()
+
+	usersRepo := usersRepo.NewUserRepo(db)
+	usersCtrl := users.NewUsersControllers(usersRepo)
+
+	routes.Endpoints(handlers, usersCtrl)
 
 	fmt.Println("server started at localhost:8000")
-	http.ListenAndServe(":8000", nil)
+	http.ListenAndServe(fmt.Sprintf(":%v", config.Port), handlers)
+
 }
