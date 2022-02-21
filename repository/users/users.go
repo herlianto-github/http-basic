@@ -52,3 +52,18 @@ func (ur *UserRepository) Gets() ([]entities.User, error) {
 
 	return users, nil
 }
+
+func (ur *UserRepository) AddUser(newUser entities.User) (entities.User, error) {
+	config := configs.GetConfig()
+	dbs := utils.InitDB(config)
+	defer dbs.Close()
+
+	_, err := dbs.Exec("insert into users values (?, ?, ?, ?)", &newUser.ID, &newUser.Name, &newUser.Email, &newUser.Password)
+
+	if err != nil {
+		fmt.Println(err.Error())
+		return newUser, errors.New("can't create user")
+	}
+
+	return newUser, nil
+}
