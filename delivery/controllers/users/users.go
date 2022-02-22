@@ -6,7 +6,6 @@ import (
 	"httpBasic/entities"
 	"httpBasic/repository/users"
 	"net/http"
-	// "google.golang.org/genproto/googleapis/cloud/common"
 )
 
 type UsersController struct {
@@ -33,16 +32,17 @@ func (uscon UsersController) Gets() http.HandlerFunc {
 		case "POST":
 
 			param := json.NewDecoder(r.Body)
-			var user entities.User
+			user := entities.User{}
 			if err := param.Decode(&user); err != nil {
 				http.Error(w, common.NewBadRequestResponse().Message, common.NewBadRequestResponse().Code)
 			} else {
+
 				newUser := entities.User{
-					ID: user.ID, Name: user.Name, Email: user.Email, Password: user.Password,
+					Name: user.Name, Email: user.Email, Password: user.Password,
 				}
 
 				if res, err := uscon.Repo.Register(newUser); err != nil {
-					http.Error(w, common.NewBadRequestResponse().Message, common.NewBadRequestResponse().Code)
+					http.Error(w, common.NewInternalServerErrorResponse().Message, common.NewInternalServerErrorResponse().Code)
 				} else {
 					common.SetHeaderResponse(w, r)
 					json.NewEncoder(w).Encode(common.NewSuccessOperationResponse(res))
