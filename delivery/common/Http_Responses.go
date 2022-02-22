@@ -1,9 +1,21 @@
 package common
 
+import "net/http"
+
 type DefaultResponse struct {
 	Code    int         `json:"code"`
 	Message string      `json:"message"`
 	Data    interface{} `json:"data"`
+}
+
+type DefaultErrorResponse struct {
+	Code    int    `json:"code"`
+	Message string `json:"message"`
+}
+
+func SetHeaderResponse(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
 }
 
 func NewSuccessOperationResponse(data interface{}) DefaultResponse {
@@ -14,42 +26,37 @@ func NewSuccessOperationResponse(data interface{}) DefaultResponse {
 	}
 }
 
-func NewInternalServerErrorResponse(data interface{}) DefaultResponse {
-	return DefaultResponse{
+func NewInternalServerErrorResponse() DefaultErrorResponse {
+	return DefaultErrorResponse{
 		500,
 		"Internal Server Error",
-		data,
 	}
 }
 
-func NewNotFoundResponse(data interface{}) DefaultResponse {
-	return DefaultResponse{
+func NewNotFoundResponse() DefaultErrorResponse {
+	return DefaultErrorResponse{
 		404,
 		"Not Found",
-		data,
 	}
 }
 
-func NewBadRequestResponse(data interface{}) DefaultResponse {
-	return DefaultResponse{
+func NewBadRequestResponse() DefaultErrorResponse {
+	return DefaultErrorResponse{
 		400,
 		"Bad Request",
-		data,
 	}
 }
 
-func NewConflictResponse(data interface{}) DefaultResponse {
-	return DefaultResponse{
+func NewConflictResponse() DefaultErrorResponse {
+	return DefaultErrorResponse{
 		409,
 		"Data Has Been Modified",
-		data,
 	}
 }
 
-func NewStatusNotAcceptable(data interface{}) DefaultResponse {
-	return DefaultResponse{
+func NewStatusNotAcceptable() DefaultErrorResponse {
+	return DefaultErrorResponse{
 		406,
 		"Not Accepted",
-		data,
 	}
 }
