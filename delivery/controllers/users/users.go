@@ -22,44 +22,35 @@ func (uscon UsersController) Gets() http.HandlerFunc {
 
 		switch r.Method {
 		case "GET":
+
 			if res, err := uscon.Repo.Gets(); err != nil {
-				http.Error(w, common.NewNotFoundResponse([]entities.User{}).Message, common.NewBadRequestResponse([]entities.User{}).Code)
+				http.Error(w, common.NewNotFoundResponse().Message, common.NewBadRequestResponse().Code)
 			} else {
-				w.Header().Set("Content-Type", "application/json")
-				w.WriteHeader(200)
-
+				common.SetHeaderResponse(w, r)
 				json.NewEncoder(w).Encode(common.NewSuccessOperationResponse(res))
-
-				// json.NewEncoder(w).Encode(map[string]interface{}{
-				// 	"code":    200,
-				// 	"message": "Succesful Operation",
-				// 	"data":    res,
-				// })
 			}
+
 		case "POST":
-			decoder := json.NewDecoder(r.Body)
 
-			var input entities.User
-
-			if err := decoder.Decode(&input); err != nil {
-				http.Error(w, common.NewBadRequestResponse(entities.User{}).Message, common.NewBadRequestResponse(entities.User{}).Code)
-			}
-
-			newUser := entities.User{
-				ID: input.ID, Name: input.Name, Email: input.Email, Password: input.Password,
-			}
-
-			if res, err := uscon.Repo.AddUser(newUser); err != nil {
-				http.Error(w, common.NewBadRequestResponse(entities.User{}).Message, common.NewBadRequestResponse(entities.User{}).Code)
+			param := json.NewDecoder(r.Body)
+			var user entities.User
+			if err := param.Decode(&user); err != nil {
+				http.Error(w, common.NewBadRequestResponse().Message, common.NewBadRequestResponse().Code)
 			} else {
-				w.Header().Set("Content-Type", "application/json")
-				w.WriteHeader(200)
+				newUser := entities.User{
+					ID: user.ID, Name: user.Name, Email: user.Email, Password: user.Password,
+				}
 
-				json.NewEncoder(w).Encode(common.NewSuccessOperationResponse(res))
+				if res, err := uscon.Repo.Register(newUser); err != nil {
+					http.Error(w, common.NewBadRequestResponse().Message, common.NewBadRequestResponse().Code)
+				} else {
+					common.SetHeaderResponse(w, r)
+					json.NewEncoder(w).Encode(common.NewSuccessOperationResponse(res))
+				}
 			}
 
 		default:
-			http.Error(w, common.NewBadRequestResponse([]entities.User{}).Message, common.NewBadRequestResponse([]entities.User{}).Code)
+			http.Error(w, common.NewBadRequestResponse().Message, common.NewBadRequestResponse().Code)
 		}
 
 	}

@@ -3,7 +3,6 @@ package users
 import (
 	"database/sql"
 	"errors"
-	"fmt"
 	"httpBasic/configs"
 	"httpBasic/entities"
 	"httpBasic/utils"
@@ -18,6 +17,15 @@ func NewUserRepo(db *sql.DB) *UserRepository {
 }
 
 func (ur *UserRepository) Register(newUser entities.User) (entities.User, error) {
+	config := configs.GetConfig()
+	dbs := utils.InitDB(config)
+	defer dbs.Close()
+
+	_, err := dbs.Exec("insert into users values (?, ?, ?, ?)", &newUser.ID, &newUser.Name, &newUser.Email, &newUser.Password)
+	if err != nil {
+		return newUser, errors.New("ERROR REGISTER USER")
+	}
+
 	return newUser, nil
 }
 
@@ -28,9 +36,9 @@ func (ur *UserRepository) Gets() ([]entities.User, error) {
 	dbs := utils.InitDB(config)
 	defer dbs.Close()
 
-	res, err := dbs.Query("select id,name,email,password from users")
+	res, err := dbs.Query("select * from users")
 	if err != nil {
-		fmt.Println("Error Gets Users", err.Error())
+		return users, errors.New("ERROR QUERY")
 	}
 	defer res.Close()
 
@@ -38,32 +46,14 @@ func (ur *UserRepository) Gets() ([]entities.User, error) {
 		var each = entities.User{}
 		var err = res.Scan(&each.ID, &each.Name, &each.Email, &each.Password)
 		if err != nil {
-			fmt.Println("Error Scan", err.Error())
-			return users, errors.New("ERROR GETS USER")
+			return users, errors.New("ERROR SCAN")
 		}
 		users = append(users, each)
-
 	}
 
 	if err = res.Err(); err != nil {
-		fmt.Println("Error Res", err.Error())
 		return users, errors.New("ERROR GETS USER")
 	}
 
 	return users, nil
-}
-
-func (ur *UserRepository) AddUser(newUser entities.User) (entities.User, error) {
-	config := configs.GetConfig()
-	dbs := utils.InitDB(config)
-	defer dbs.Close()
-
-	_, err := dbs.Exec("insert into users values (?, ?, ?, ?)", &newUser.ID, &newUser.Name, &newUser.Email, &newUser.Password)
-
-	if err != nil {
-		fmt.Println(err.Error())
-		return newUser, errors.New("can't create user")
-	}
-
-	return newUser, nil
 }
