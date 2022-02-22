@@ -6,6 +6,8 @@ import (
 	"httpBasic/configs"
 	"httpBasic/entities"
 	"httpBasic/utils"
+
+	"github.com/google/uuid"
 )
 
 type UserRepository struct {
@@ -21,12 +23,13 @@ func (ur *UserRepository) Register(newUser entities.User) (entities.User, error)
 	dbs := utils.InitDB(config)
 	defer dbs.Close()
 
-	_, err := dbs.Exec("insert into users values (?, ?, ?, ?)", &newUser.ID, &newUser.Name, &newUser.Email, &newUser.Password)
+	userID := uuid.New()
+	_, err := dbs.Exec("insert into users values (?,?,?,?)", userID, newUser.Name, newUser.Email, newUser.Password)
 	if err != nil {
 		return newUser, errors.New("ERROR REGISTER USER")
 	}
-
 	return newUser, nil
+
 }
 
 func (ur *UserRepository) Gets() ([]entities.User, error) {
@@ -44,7 +47,7 @@ func (ur *UserRepository) Gets() ([]entities.User, error) {
 
 	for res.Next() {
 		var each = entities.User{}
-		var err = res.Scan(&each.ID, &each.Name, &each.Email, &each.Password)
+		var err = res.Scan(&each.Name, &each.Email, &each.Password)
 		if err != nil {
 			return users, errors.New("ERROR SCAN")
 		}
@@ -53,7 +56,8 @@ func (ur *UserRepository) Gets() ([]entities.User, error) {
 
 	if err = res.Err(); err != nil {
 		return users, errors.New("ERROR GETS USER")
+	} else {
+		return users, nil
 	}
 
-	return users, nil
 }
